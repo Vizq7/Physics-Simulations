@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+    <script src="sketch.js"></script>
+</head>
+
+<body style="margin: 30px; padding: 0px;">
+    <main>
+        <h1>Water tank simulation</h1>
+        <p><span style="font-family: Arial, Helvetica, sans-serif;">This simulation shows how a water tank is filled with water, for simplicity the tank is represented in 2D.</span></p>
+        <div id="sketchContainer" style="text-align: center;"><br></div>
+        <p><br></p>
+        <h2>The maths behind it</h2>
+        <p><span style="font-family: Arial, Helvetica, sans-serif;">Initially we have a cylindrical tank of A<sub>tank&nbsp;</sub>= 0.8 m<sup>2&nbsp;</sup> of area and 1.5 m of height that is empty. At time t=0 water starts flowing in through a pipe of A<sub>in</sub> = 0.2 m<sup>2&nbsp;</sup>of area.&nbsp;However, the tank has an outtake pipe of A<sub>out&nbsp;</sub>= 0.03 m<sup>2&nbsp;</sup> of area, where the water is allowed to escape.<br><br></span></p>
+        <p><span style="font-family: Arial, Helvetica, sans-serif;">The volume of water owing per unit of time (i.e. volumetric flow V&#39;) through a pipe can be obtained by multiplying the fluid speed (v) times the cross-section area (A) of the pipe.</span><br><br></p>
+        <p style="text-align: center;">&nbsp;<img src="https://latex.codecogs.com/png.latex?\large&space;\Dot{V}=\frac{dV}{dt}=v(t)A(t)" title="\large V'=\frac{dV}{dt}=v(t)A(t)"></p>
+        <p style="text-align: left;"><br><span style="font-family: Arial, Helvetica, sans-serif;">Thus, the volume of water stored in the tank is determined by the intake and the outtake flows.</span></p>
+        <p style="text-align: center;"><br><img src="https://latex.codecogs.com/gif.latex?\large&space;\Dot{V}_{tank}=\Dot{V}_i_n-\Dot{V}_{out}" title="\large V'_{tank}=V'_i_n-V'_{out}"></p>
+        <p><span style="font-family: Arial, Helvetica, sans-serif;">&nbsp;We consider that the velocity at the intake pipe is:</span></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/gif.latex?\large&space;v_i_n(t)=4e^{-0.4t}" title="\large v_i_n(t)=4e^{-0.4t}"><br><br></p>
+        <p style="text-align: left;"><span style="font-family: Arial, Helvetica, sans-serif;">Additionally, there is an outtake pipe on the tank, whose flow is only determined by passive effects. The outtake velocity will only be determined by the hydrostatic pressure inside the tank, i.e. the more water there is the higher the pressure, and, therefore, the higher the outlet velocity. Lets deffine Bernoulli&#39;s equation, which describes the relation between pressure, velocity and height of the fluid in both sides of a pipe. <br></span></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/gif.latex?\large&space;\frac{1}{2}\rho&space;v^2_{tank}+\rho&space;gh_{tank}+P_{tank}=\frac{1}{2}\rho&space;v^2_{out}+\rho&space;gh_{out}+P_{out}" title="\large \frac{1}{2}\rho v^2_{tank}+\rho gh_{tank}+P_{tank}=\frac{1}{2}\rho v^2_{out}+\rho gh_{out}+P_{out}"><br><br></p>
+        <p style="text-align: left;"><span style="font-family: Arial, Helvetica, sans-serif;">Where <em>g</em> is the gravity acceleration, &rho; is the density of the fluid, <em>h</em> its height, <em>v</em> its velocity, and <em>P</em> its pressure. The outtake pipe is placed at the bottom of the tank, and both pressures inside and outside are P<sub>tank</sub> = P<sub>out</sub> = 1 atm.&nbsp;Thus, knowing that in the current problem the inlet velocity is 0, we can simplify&nbsp;Bernoulli&#39;s&nbsp;equation and isolate v</span><sub><span style="font-family: Arial, Helvetica, sans-serif;">out</span></sub>.<br><br></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/gif.latex?\large&space;\rho&space;gh_{tank}=\frac{1}{2}\rho&space;v^2_{out}&space;\Rightarrow&space;v_{out}(t)=\sqrt{2gh_{tank}(t)}" title="\large \rho gh_{tank}=\frac{1}{2}\rho v^2_{out} \Rightarrow v_{out}(t)=\sqrt{2gh_{tank}(t)}"><br><br></p>
+        <p style="text-align: left;"><span style="font-family: Arial, Helvetica, sans-serif;">Where h<sub>tank</sub> is the height of the water of the cylindrical tank. Thus, the outtake velocity is only determined by the height of water inside the tank.</span><br><br></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/gif.latex?\large&space;h_{tank}(t)=\frac{V_{tank}(t)}{A_{tank}}" title="\large h_{tank}(t)=\frac{V_{tank}(t)}{A_{tank}}"></p>
+        <p style="text-align: left;"><br><span style="font-family: Arial, Helvetica, sans-serif;">Finally making some substitutions, we obtain the ordinary differential equation (ODE) that describes the volume of water being stored in the tank:</span></p>
+        <p style="text-align: left;">&nbsp;</p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/gif.latex?\large&space;\Dot{V}_{tank}=\frac{dV}{dt}=\Dot{V}_{in}-\Dot{V}_{out}=4e^{-0.4t}A_{in}-\sqrt{2gh_{tank}(t)}\&space;A_{out}" title="\large V'_{tank}=\frac{dV}{dt}=V'_{in}-V'_{out}=4e^{-0.4t}A_{in}-\sqrt{2gh_{tank}(t)}\ A_{out}"></p>
+        <p style="text-align: center;">&nbsp;</p>
+        <p style="text-align: left;"><span style="font-family: Arial, Helvetica, sans-serif;">Now with the ODE we can simulate the water tank using the numerical methods: <a href="https://en.wikipedia.org/wiki/Euler_method" target="_blank">Euler</a> and <a href="https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods" target="_blank">Runge-Kutta</a> of second and fourth order which equations are:</span></p>
+        <p style="text-align: left;"><br></p>
+        <p style="text-align: left;"><span style="font-family: Arial, Helvetica, sans-serif;"><u><strong>Euler</strong></u></span></p>
+        <p style="text-align: center;"></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;V(t+\Delta%20t)=V(t)+\Delta&space;t\dot{V}(t,V(t))" title="\large V(t)=V(t)+\Delta t\dot{V}(t,V(t))" ></p>
+        <p style="text-align: center;"><br></p>
+        <p style="text-align: left;"><span style="font-family: Arial, Helvetica, sans-serif;">with&nbsp;</span></p>
+        <p style="text-align: center;"><span style="font-family: Arial, Helvetica, sans-serif;"><img src="https://latex.codecogs.com/png.latex?\large&space;h=\frac{V(t)}{A_{tank}}\\" title="\large h=\frac{V(t)}{A_{tank}}\\">&nbsp;</span></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;\dot{V}(t,V(t))=4e^{-0.4t}A_{in}-\sqrt{2gh}\&space;A_{out}" title="\large \dot{V}(t,V(t))=4e^{-0.4t}A_{in}-\sqrt{2gh}\ A_{out}"></p>
+        <p style="text-align: center;"><br></p>
+        <p style="text-align: left;"><strong><u><span style="font-family: Arial, Helvetica, sans-serif;">RK2</span></u></strong></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;V(t+\Delta&space;t)=V(t)+\frac{\Delta&space;t}{2}(\dot{V_1}+\dot{V}_2)" title="\large V(t+\Delta t)=V(t)+\frac{\Delta t}{2}(\dot{V_1}+\dot{V}_2)"></p>
+        <p style="text-align: left;"><span style="font-family: Arial, Helvetica, sans-serif;">with</span></p>
+        <p style="text-align: center;"><br><img src="https://latex.codecogs.com/png.latex?\large&space;h_1=\frac{V(t)}{A_{tank}}\\" title="\large h_1=\frac{V(t)}{A_{tank}}\\"></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;\dot{V}_1=4e^{-0.4t}A_{in}-\sqrt{2gh_1}\&space;A_{out}" title="\large \dot{V}_1=4e^{-4t}A_{in}-\sqrt{2gh_1}\ A_{out}"></p>
+        <p style="text-align: center;"><br></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;h_2=\frac{V(t)+\Delta&space;t\dot{V}_1}{A_{tank}}" title="\large h_2=\frac{V(t)+\Delta t\dot{V}_1}{A_{tank}}"></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;\dot{V}_2=4e^{-0.4(t+\Delta&space;t)}A_{in}-\sqrt{2gh_2}\&space;A_{out}" title="\large \dot{V}_2=4e^{-0.4(t+\Delta t)}A_{in}-\sqrt{2gh_2}\ A_{out}"></p>
+        <p style="text-align: center;"><br></p>
+        <p style="text-align: left;"><strong><u><span style="font-family: Arial, Helvetica, sans-serif;">RK4</span></u></strong></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;V(t+\Delta&space;t)=V(t)+\frac{\Delta&space;t}{6}(\Dot{V}_1+2\Dot{V}_2+2\Dot{V}_3+\dot{V_4})" title="\large V(t+\Delta t)=V(t)+\frac{\Delta t}{6}(\Dot{V}_1+2\Dot{V}_2+2\Dot{V}_3+\dot{V_4})"></p>
+        <p style="text-align: left;"><span style="font-family: Arial, Helvetica, sans-serif;">with</span></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;h_1=\frac{V(t)}{A_{tank}}\\" title="\large h_1=\frac{V(t)}{A_{tank}}\\"></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;\dot{V}_1=4e^{-0.4t}A_{in}-\sqrt{2gh_1}\&space;A_{out}" title="\large \dot{V}_1=4e^{-4t}A_{in}-\sqrt{2gh_1}\ A_{out}"></p><br>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/gif.latex?\large&space;h_2(t)=\frac{V(t)+\frac{\Delta&space;t}{2}\Dot&space;V_1}{A_{tank}}" title="\large h_2(t)=\frac{V(t)+\frac{\Delta t}{2}\Dot V_1}{A_{tank}}"></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;\dot{V}_2=4e^{-0.4(t+\frac{\Delta&space;t}{2})}A_{in}-\sqrt{2gh_2}\&space;A_{out}" title="\large \dot{V}_2=4e^{-0.4(t+\frac{\Delta t}{2})}A_{in}-\sqrt{2gh_2}\ A_{out}"></p><br>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/gif.latex?\large&space;h_3(t)=\frac{V(t)+\frac{\Delta&space;t}{2}\Dot&space;V_2}{A_{tank}}" title="\large h_3(t)=\frac{V(t)+\frac{\Delta t}{2}\Dot V_2}{A_{tank}}"></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;\dot{V}_3=4e^{-0.4(t+\frac{\Delta&space;t}{2})}A_{in}-\sqrt{2gh_3}\&space;A_{out}" title="\large \dot{V}_3=4e^{-0.4(t+\frac{\Delta t}{2})}A_{in}-\sqrt{2gh_3}\ A_{out}"></p>
+        <p style="text-align: center;"><br></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;h_4=\frac{V(t)+\Delta&space;t\dot{V}_3}{A_{tank}}" title="\large h_4=\frac{V(t)+\Delta t\dot{V}_3}{A_{tank}}"></p>
+        <p style="text-align: center;"><img src="https://latex.codecogs.com/png.latex?\large&space;\dot{V}_4=4e^{-0.4(t+\Delta&space;t)}A_{in}-\sqrt{2gh_4}\&space;A_{out}" title="\large \dot{V}_4=4e^{-0.4(t+\Delta t)}A_{in}-\sqrt{2gh_4}\ A_{out}"></p>
+    </main>
+</body>
+
+</html>
